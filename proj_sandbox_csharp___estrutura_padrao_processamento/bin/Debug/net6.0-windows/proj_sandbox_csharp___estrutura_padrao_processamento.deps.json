@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "proj_sandbox_csharp___estrutura_padrao_processamento/1.0.0": {
+        "runtime": {
+          "proj_sandbox_csharp___estrutura_padrao_processamento.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "proj_sandbox_csharp___estrutura_padrao_processamento/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
