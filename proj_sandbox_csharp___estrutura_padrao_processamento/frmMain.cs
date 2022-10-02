@@ -6,7 +6,8 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
     public partial class frmMain : Form
     {
 
-        ObjCore oCore;
+        ObjCore oCore = new ObjCore();        
+
         public frmMain()
         {
 
@@ -14,10 +15,8 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
 
             chkl_Arquivos.Items.Clear();
 
-            ObjCore oCore = new ObjCore();
-
-            txt_PathEntrada.Text = oCore.objConfig.PathEntrada;
-            txt_PathSaida.Text = oCore.objConfig.PathSaida;
+            txt_PathEntrada.Text = oCore.oConfig.PathEntrada;
+            txt_PathSaida.Text = oCore.oConfig.PathSaida;
 
         }
 
@@ -74,12 +73,17 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
                 chkl_Arquivos.Items.Clear();
                 DirectoryInfo diretorio = new DirectoryInfo(txt_PathEntrada.Text);
                 //Executa função GetFile(Lista os arquivos desejados de acordo com o parametro)
-                FileInfo[] Arquivos = diretorio.GetFiles("*.*");
 
-                //Começamos a listar os arquivos                
-                foreach (FileInfo fileinfo in Arquivos)
+                if (oCore.oConfig.Extensao != null)
                 {
-                    chkl_Arquivos.Items.Add(fileinfo.Name);
+
+                    FileInfo[] Arquivos = diretorio.GetFiles(oCore.oConfig.Extensao);
+
+                    //Começamos a listar os arquivos                
+                    foreach (FileInfo fileinfo in Arquivos)
+                    {
+                        chkl_Arquivos.Items.Add(fileinfo.Name);
+                    }
                 }
             }
             catch
@@ -91,14 +95,15 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
 
         private void btn_Processar_Click(object sender, EventArgs e)
         {
-            // oCore.objConfig.PathEntrada = txt_PathEntrada.Text;
-            // oCore.objConfig.PathSaida = txt_PathSaida.Text;
+             oCore.oConfig.PathEntrada = txt_PathEntrada.Text;
+             oCore.oConfig.PathSaida = txt_PathSaida.Text;
+
             string sArquivoProcessar = "";
             for (int iContArquivo = 0; iContArquivo <= chkl_Arquivos.CheckedItems.Count -1; iContArquivo++)
             {
-              sArquivoProcessar = txt_PathEntrada.Text + "\\" + chkl_Arquivos.CheckedItems[iContArquivo];
+                sArquivoProcessar = txt_PathEntrada.Text + "\\" + chkl_Arquivos.CheckedItems[iContArquivo];
 
-              ObjCore.ProcessarArquivo(sArquivoProcessar);
+                oCore.ProcessarArquivo(sArquivoProcessar);
             }
         }
     }
