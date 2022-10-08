@@ -4,7 +4,8 @@ public class ObjConf
 {
 
     //private static readonly ObjConf _instance = new ObjConf();
-    
+
+    public string? DataProcessamento { get; set; }
     public string? PathEntrada { get; set; }
     public string? PathSaida { get; set; }
 

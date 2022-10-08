@@ -6,7 +6,9 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
     public partial class frmMain : Form
     {
 
-        ObjCore oCore = new ObjCore();        
+        ObjCore oCore = new ObjCore();
+
+        private static DateTime DataProcessamento;
 
         public frmMain()
         {
@@ -15,8 +17,8 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
 
             chkl_Arquivos.Items.Clear();
 
-            txt_PathEntrada.Text = oCore.oConfig.PathEntrada;
-            txt_PathSaida.Text = oCore.oConfig.PathSaida;
+            txt_PathEntrada.Text = oCore.ajustaPath(oCore.oConfig.PathEntrada);
+            txt_PathSaida.Text = oCore.ajustaPath(oCore.oConfig.PathSaida);
 
         }
 
@@ -37,9 +39,12 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
 
         private void btn_SelecionarPath_Click(object sender, EventArgs e)
         {
-            if(folderBrowserDialogPathEntrada.ShowDialog() == DialogResult.OK)
+
+            folderBrowserDialogPathEntrada.SelectedPath = txt_PathEntrada.Text;
+
+            if (folderBrowserDialogPathEntrada.ShowDialog() == DialogResult.OK)
             {
-                txt_PathEntrada.Text = folderBrowserDialogPathEntrada.SelectedPath;
+                txt_PathEntrada.Text = oCore.ajustaPath(folderBrowserDialogPathEntrada.SelectedPath);
             }
         }
 
@@ -60,9 +65,12 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
 
         private void btn_SelecionaPathSaida_Click(object sender, EventArgs e)
         {
+
+            folderBrowserDialogPathEntrada.SelectedPath = txt_PathSaida.Text;
+
             if (folderBrowserDialogPathEntrada.ShowDialog() == DialogResult.OK)
             {
-                txt_PathSaida.Text = folderBrowserDialogPathEntrada.SelectedPath;
+                txt_PathSaida.Text = oCore.ajustaPath(folderBrowserDialogPathEntrada.SelectedPath);
             }
         }
 
@@ -95,16 +103,49 @@ namespace proj_sandbox_csharp___estrutura_padrao_processamento
 
         private void btn_Processar_Click(object sender, EventArgs e)
         {
-             oCore.oConfig.PathEntrada = txt_PathEntrada.Text;
-             oCore.oConfig.PathSaida = txt_PathSaida.Text;
 
-            string sArquivoProcessar = "";
-            for (int iContArquivo = 0; iContArquivo <= chkl_Arquivos.CheckedItems.Count -1; iContArquivo++)
+            frm_Processa();
+
+        }
+
+        private void frm_Processa()
+        {
+
+            //======================================================================================================================================================
+            // PREPARA OS PARÂMETROS SELECIONADOS
+            //======================================================================================================================================================
+            DataProcessamento = this.dtp_DataProcessamento.Value.Date;
+            oCore.oConfig.DataProcessamento = string.Format("{0:dd/MM/yyyy}", DataProcessamento);
+
+            oCore.oConfig.PathEntrada = oCore.ajustaPath(txt_PathEntrada.Text);
+            oCore.oConfig.PathSaida = oCore.ajustaPath(txt_PathSaida.Text);
+
+            //======================================================================================================================================================
+            // LÊ ARQUIVO POR ARQUIVO SELECIONADO
+            //======================================================================================================================================================
+            string sArquivoProcessar = String.Empty;
+            for (int iContArquivo = 0; iContArquivo <= chkl_Arquivos.CheckedItems.Count - 1; iContArquivo++)
             {
-                sArquivoProcessar = txt_PathEntrada.Text + "\\" + chkl_Arquivos.CheckedItems[iContArquivo];
+                sArquivoProcessar = chkl_Arquivos.CheckedItems[iContArquivo].ToString();
 
-                oCore.ProcessarArquivo(sArquivoProcessar);
+                oCore.ProcessarArquivo(oCore.oConfig.PathEntrada + sArquivoProcessar, oCore.oConfig.PathSaida);
+
+                oCore.GravaArquivo(sArquivoProcessar, oCore.oConfig.PathSaida);
+
             }
+            //======================================================================================================================================================
+
+
+            //======================================================================================================================================================
+            // FIM DE PROCESSAMENTO, PERGUNTA SE QUER ABRIR O DIRETÓRIO ONDE O ARQUIVO FOI CRIADO
+            //======================================================================================================================================================
+            DialogResult dialogResult = MessageBox.Show("Fim de processamento !!! \nDeseja abrir a pasta de saída?", "Processamento", MessageBoxButtons.YesNo);
+            if (dialogResult == DialogResult.Yes)
+            {
+                oCore.OpenAndSelectPath(oCore.oConfig.PathSaida + sArquivoProcessar);
+            }
+            //======================================================================================================================================================
+
         }
     }
 }
